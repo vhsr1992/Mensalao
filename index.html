@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mensalão FC — Futebol e Ofensa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #1a7a3c;
+    --verde-escuro: #0f5228;
+    --verde-claro: #e8f5ee;
+    --amarelo: #f5c518;
+    --amarelo-escuro: #b8940f;
+    --bg: #0d0d0d;
+    --bg2: #161616;
+    --bg3: #1e1e1e;
+    --borda: rgba(255,255,255,0.08);
+    --texto: #f0f0f0;
+    --texto2: #999;
+    --radius: 10px;
+    --danger: #e03e3e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--texto);
+    min-height: 100vh;
+  }
+  /* HEADER */
+  header {
+    background: var(--bg2);
+    border-bottom: 2px solid var(--verde);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--amarelo);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .logo span { color: var(--verde); }
+  nav {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+  nav button {
+    background: none;
+    border: none;
+    color: var(--texto2);
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  nav button:hover { background: var(--bg3); color: var(--texto); }
+  nav button.ativo { background: var(--verde); color: #fff; }
+
+  /* PAGES */
+  .page { display: none; padding: 1.5rem; max-width: 900px; margin: 0 auto; }
+  .page.ativo { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--borda);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .card-titulo {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--texto2);
+    margin-bottom: 0.75rem;
+  }
+
+  /* STAT CARDS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem; }
+  .stat-card {
+    background: var(--bg3);
+    border-radius: var(--radius);
+    padding: 1rem;
+    border: 1px solid var(--borda);
+  }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--amarelo); line-height: 1; }
+  .stat-label { font-size: 0.72rem; color: var(--texto2); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* BOTÕES */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .btn-verde { background: var(--verde); color: #fff; }
+  .btn-verde:hover { background: var(--verde-escuro); }
+  .btn-amarelo { background: var(--amarelo); color: #000; }
+  .btn-amarelo:hover { background: var(--amarelo-escuro); color: #fff; }
+  .btn-ghost { background: var(--bg3); color: var(--texto2); border: 1px solid var(--borda); }
+  .btn-ghost:hover { color: var(--texto); }
+  .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+  .btn-danger:hover { background: var(--danger); color: #fff; }
+  .btn-sm { padding: 0.3rem 0.65rem; font-size: 0.78rem; }
+
+  /* FORMS */
+  .form-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.35rem; flex: 1; min-width: 140px; }
+  label { font-size: 0.78rem; color: var(--texto2); font-weight: 500; }
+  input, select, textarea {
+    background: var(--bg3);
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    color: var(--texto);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.88rem;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border 0.15s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--verde); }
+  select option { background: var(--bg2); }
+
+  /* TABLES */
+  .tabela-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+  th { text-align: left; font-size: 0.7rem; color: var(--texto2); text-transform: uppercase; letter-spacing: 1px; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--borda); }
+  td { padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--borda); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg3); }
+  .rank { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--texto2); }
+  .rank-1 { color: var(--amarelo); }
+  .rank-2 { color: #c0c0c0; }
+  .rank-3 { color: #cd7f32; }
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .badge-verde { background: rgba(26,122,60,0.25); color: #4ade80; }
+  .badge-vermelho { background: rgba(224,62,62,0.2); color: #f87171; }
+  .badge-amarelo { background: rgba(245,197,24,0.2); color: var(--amarelo); }
+  .badge-cinza { background: var(--bg3); color: var(--texto2); }
+
+  /* TIMES */
+  .times-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .time-card {
+    background: var(--bg3);
+    border-radius: var(--radius);
+    padding: 1rem;
+    border: 1px solid var(--borda);
+  }
+  .time-titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .bola { font-size: 1.1rem; }
+  .jogador-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--borda);
+    font-size: 0.85rem;
+  }
+  .jogador-item:last-child { border-bottom: none; }
+  .avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  /* FINANCEIRO */
+  .saldo-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    line-height: 1;
+  }
+  .saldo-positivo { color: #4ade80; }
+  .saldo-negativo { color: #f87171; }
+
+  /* ALERT */
+  .alert {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+  .alert-verde { background: rgba(26,122,60,0.2); border: 1px solid rgba(26,122,60,0.4); color: #4ade80; }
+  .alert-danger { background: rgba(224,62,62,0.15); border: 1px solid rgba(224,62,62,0.3); color: #f87171; }
+
+  /* SECAO TITULO */
+  .secao-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .secao-titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--texto);
+  }
+  .secao-titulo .destaque { color: var(--amarelo); }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--borda); margin: 1rem 0; }
+
+  /* POSIÇÃO BADGE */
+  .pos { font-size: 0.72rem; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 600; }
+  .pos-GOL { background: rgba(245,197,24,0.15); color: var(--amarelo); }
+  .pos-ZAG { background: rgba(26,122,60,0.2); color: #4ade80; }
+  .pos-LAT { background: rgba(26,122,60,0.15); color: #6ee7b7; }
+  .pos-MEI { background: rgba(56,189,248,0.15); color: #38bdf8; }
+  .pos-ATA { background: rgba(224,62,62,0.2); color: #f87171; }
+
+  /* TABS internas */
+  .tabs { display: flex; gap: 0.25rem; margin-bottom: 1rem; }
+  .tab { padding: 0.4rem 0.85rem; border-radius: 6px; background: none; border: 1px solid var(--borda); color: var(--texto2); cursor: pointer; font-size: 0.82rem; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .tab.ativo { background: var(--verde); border-color: var(--verde); color: #fff; }
+
+  /* ESCALAÇÃO sortable */
+  .pool-area {
+    min-height: 60px;
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 0.5rem;
+    border: 1px dashed var(--borda);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 20px;
+    background: var(--bg2);
+    border: 1px solid var(--borda);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--verde); }
+  .chip.time-a { background: rgba(26,122,60,0.2); border-color: rgba(26,122,60,0.4); }
+  .chip.time-b { background: rgba(245,197,24,0.15); border-color: rgba(245,197,24,0.3); color: #fbbf24; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .times-grid { grid-template-columns: 1fr; }
+    .logo { font-size: 1.2rem; }
+    nav button { padding: 0.35rem 0.5rem; font-size: 0.75rem; }
+    .secao-titulo { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Mensalão <span>FC</span></div>
+  <nav>
+    <button class="ativo" onclick="irPara('dashboard')">⚡ Início</button>
+    <button onclick="irPara('jogadores')">👥 Membros</button>
+    <button onclick="irPara('partidas')">⚽ Partidas</button>
+    <button onclick="irPara('stats')">📊 Stats</button>
+    <button onclick="irPara('financeiro')">💰 Caixa</button>
+  </nav>
+</header>
+
+<!-- ==================== DASHBOARD ==================== -->
+<div id="pg-dashboard" class="page ativo">
+  <div class="secao-header">
+    <div>
+      <div style="font-size:0.75rem;color:var(--texto2);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.25rem">Bem-vindo ao</div>
+      <div class="secao-titulo">Mensalão <span class="destaque">FC</span></div>
+      <div style="color:var(--texto2);font-size:0.85rem;margin-top:0.2rem">Futebol & Ofensa 🤣</div>
+    </div>
+  </div>
+
+  <div class="stats-grid" id="dash-stats">
+    <div class="stat-card"><div class="stat-num" id="d-membros">0</div><div class="stat-label">Membros</div></div>
+    <div class="stat-card"><div class="stat-num" id="d-partidas">0</div><div class="stat-label">Partidas</div></div>
+    <div class="stat-card"><div class="stat-num" id="d-gols">0</div><div class="stat-label">Gols registrados</div></div>
+    <div class="stat-card"><div class="stat-num saldo-positivo" id="d-saldo">R$0</div><div class="stat-label">Saldo do caixa</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card">
+      <div class="card-titulo">🥇 Artilheiro</div>
+      <div id="dash-artilheiro" style="font-size:1.1rem;font-weight:500">—</div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">🎯 Mais assistências</div>
+      <div id="dash-assist" style="font-size:1.1rem;font-weight:500">—</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:0">
+    <div class="card-titulo">📅 Últimas partidas</div>
+    <div id="dash-ultimas">
+      <div style="color:var(--texto2);font-size:0.85rem">Nenhuma partida registrada ainda.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== JOGADORES ==================== -->
+<div id="pg-jogadores" class="page">
+  <div class="secao-header">
+    <div class="secao-titulo">Membros <span class="destaque">do Clube</span></div>
+    <button class="btn btn-verde" onclick="toggleForm('form-jogador')">+ Adicionar membro</button>
+  </div>
+
+  <div class="card" id="form-jogador" style="display:none">
+    <div class="card-titulo">Novo membro</div>
+    <div class="form-row">
+      <div class="form-group"><label>Nome *</label><input id="j-nome" type="text" placeholder="Ex: Zé da Trave"></div>
+      <div class="form-group"><label>Apelido</label><input id="j-apelido" type="text" placeholder="Ex: Cavadinha"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Posição</label>
+        <select id="j-posicao">
+          <option value="GOL">Goleiro</option>
+          <option value="ZAG">Zagueiro</option>
+          <option value="LAT">Lateral</option>
+          <option value="MEI" selected>Meia</option>
+          <option value="ATA">Atacante</option>
+        </select>
+      </div>
+      <div class="form-group"><label>WhatsApp</label><input id="j-fone" type="text" placeholder="(11) 9xxxx-xxxx"></div>
+    </div>
+    <div style="display:flex;gap:0.5rem">
+      <button class="btn btn-verde" onclick="salvarJogador()">Salvar membro</button>
+      <button class="btn btn-ghost" onclick="toggleForm('form-jogador')">Cancelar</button>
+    </div>
+    <div class="alert alert-verde" id="alert-jogador">✓ Membro adicionado!</div>
+  </div>
+
+  <div class="card">
+    <div class="tabela-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Apelido</th>
+            <th>Posição</th>
+            <th>Gols</th>
+            <th>Assist.</th>
+            <th>Partidas</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-jogadores">
+          <tr><td colspan="8" style="color:var(--texto2);text-align:center;padding:2rem">Nenhum membro cadastrado.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PARTIDAS ==================== -->
+<div id="pg-partidas" class="page">
+  <div class="secao-header">
+    <div class="secao-titulo">Partidas <span class="destaque">& Escalação</span></div>
+    <button class="btn btn-verde" onclick="toggleForm('form-partida')">+ Nova partida</button>
+  </div>
+
+  <!-- FORM NOVA PARTIDA -->
+  <div class="card" id="form-partida" style="display:none">
+    <div class="card-titulo">Registrar partida</div>
+    <div class="form-row">
+      <div class="form-group"><label>Data *</label><input id="p-data" type="date"></div>
+      <div class="form-group"><label>Local</label><input id="p-local" type="text" placeholder="Ex: Quadra do Zé"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Placar Time A</label><input id="p-gols-a" type="number" min="0" value="0"></div>
+      <div class="form-group"><label>Placar Time B</label><input id="p-gols-b" type="number" min="0" value="0"></div>
+    </div>
+    <hr class="divider">
+    <div class="card-titulo">Escalação — arraste para montar os times</div>
+    <div style="margin-bottom:0.5rem;font-size:0.8rem;color:var(--texto2)">Clique nos jogadores para alocar nos times</div>
+    <div style="margin-bottom:0.75rem">
+      <label style="margin-bottom:0.4rem;display:block">Disponíveis:</label>
+      <div class="pool-area" id="pool-disponivel"></div>
+    </div>
+    <div class="times-grid" style="margin-bottom:0.75rem">
+      <div>
+        <label style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.4rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:var(--verde);display:inline-block"></span>
+          Time A (Verde)
+        </label>
+        <div class="pool-area" id="pool-time-a" onclick="moverDeVolta(event,'A')"></div>
+      </div>
+      <div>
+        <label style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.4rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:var(--amarelo);display:inline-block"></span>
+          Time B (Amarelo)
+        </label>
+        <div class="pool-area" id="pool-time-b" onclick="moverDeVolta(event,'B')"></div>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="card-titulo">Gols & Assistências da partida</div>
+    <div id="eventos-partida">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Artilheiro</label>
+          <select id="ev-goleador"><option value="">Selecionar jogador</option></select>
+        </div>
+        <div class="form-group">
+          <label>Nº de gols</label>
+          <input type="number" id="ev-ngols" min="0" value="0">
+        </div>
+        <div class="form-group">
+          <label>Assistências</label>
+          <input type="number" id="ev-nassist" min="0" value="0">
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm" style="margin-bottom:0.75rem" onclick="adicionarLinhaEvento()">+ Outro jogador</button>
+    <div style="display:flex;gap:0.5rem">
+      <button class="btn btn-verde" onclick="salvarPartida()">Salvar partida</button>
+      <button class="btn btn-ghost" onclick="toggleForm('form-partida');carregarPool()">Cancelar</button>
+    </div>
+    <div class="alert alert-verde" id="alert-partida">✓ Partida salva!</div>
+  </div>
+
+  <!-- LISTA DE PARTIDAS -->
+  <div class="card">
+    <div class="tabela-wrap">
+      <table>
+        <thead>
+          <tr><th>Data</th><th>Local</th><th>Placar</th><th>Resultado</th><th></th></tr>
+        </thead>
+        <tbody id="tbody-partidas">
+          <tr><td colspan="5" style="color:var(--texto2);text-align:center;padding:2rem">Nenhuma partida registrada.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STATS ==================== -->
+<div id="pg-stats" class="page">
+  <div class="secao-header">
+    <div class="secao-titulo">Estatísticas <span class="destaque">do Mensalão</span></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab ativo" onclick="mudarTab(this,'artilharia')">⚽ Artilharia</button>
+    <button class="tab" onclick="mudarTab(this,'assistencias')">🎯 Assistências</button>
+    <button class="tab" onclick="mudarTab(this,'participacoes')">📅 Presenças</button>
+  </div>
+
+  <div id="tab-artilharia">
+    <div class="card">
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Jogador</th><th>Posição</th><th>⚽ Gols</th><th>Média/jogo</th></tr></thead>
+          <tbody id="rank-artilharia"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-assistencias" style="display:none">
+    <div class="card">
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Jogador</th><th>Posição</th><th>🎯 Assist.</th><th>Média/jogo</th></tr></thead>
+          <tbody id="rank-assistencias"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-participacoes" style="display:none">
+    <div class="card">
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Jogador</th><th>Partidas</th><th>% Presença</th></tr></thead>
+          <tbody id="rank-participacoes"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FINANCEIRO ==================== -->
+<div id="pg-financeiro" class="page">
+  <div class="secao-header">
+    <div class="secao-titulo">Caixa <span class="destaque">do Clube</span></div>
+    <button class="btn btn-verde" onclick="toggleForm('form-transacao')">+ Lançamento</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="saldo-big" id="fin-saldo">R$0</div>
+      <div class="stat-label">Saldo atual</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#4ade80" id="fin-entradas">R$0</div>
+      <div class="stat-label">Total entradas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#f87171" id="fin-saidas">R$0</div>
+      <div class="stat-label">Total saídas</div>
+    </div>
+  </div>
+
+  <div class="card" id="form-transacao" style="display:none">
+    <div class="card-titulo">Novo lançamento</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="t-tipo">
+          <option value="entrada">Entrada (mensalidade, doação, etc)</option>
+          <option value="saida">Saída (quadra, uniforme, etc)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Valor (R$) *</label><input id="t-valor" type="number" min="0" step="0.01" placeholder="0,00"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Descrição *</label><input id="t-desc" type="text" placeholder="Ex: Mensalidade Março — Zé"></div>
+      <div class="form-group"><label>Data</label><input id="t-data" type="date"></div>
+    </div>
+    <div style="display:flex;gap:0.5rem">
+      <button class="btn btn-verde" onclick="salvarTransacao()">Salvar</button>
+      <button class="btn btn-ghost" onclick="toggleForm('form-transacao')">Cancelar</button>
+    </div>
+    <div class="alert alert-verde" id="alert-transacao">✓ Lançamento salvo!</div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo">Extrato</div>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th><th></th></tr></thead>
+        <tbody id="tbody-transacoes">
+          <tr><td colspan="5" style="color:var(--texto2);text-align:center;padding:2rem">Nenhum lançamento registrado.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== STORAGE LOCAL ======
+const DB = {
+  get(k){ try{ return JSON.parse(localStorage.getItem('mensalao_'+k)||'null') }catch(e){return null} },
+  set(k,v){ localStorage.setItem('mensalao_'+k, JSON.stringify(v)) }
+};
+
+let jogadores = DB.get('jogadores') || [];
+let partidas = DB.get('partidas') || [];
+let transacoes = DB.get('transacoes') || [];
+
+function salvar(){
+  DB.set('jogadores', jogadores);
+  DB.set('partidas', partidas);
+  DB.set('transacoes', transacoes);
+}
+
+// ====== NAVEGAÇÃO ======
+function irPara(pg){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('ativo'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('ativo'));
+  document.getElementById('pg-'+pg).classList.add('ativo');
+  event.currentTarget.classList.add('ativo');
+  if(pg==='dashboard') atualizarDashboard();
+  if(pg==='jogadores') renderJogadores();
+  if(pg==='partidas'){ renderPartidas(); carregarPool(); }
+  if(pg==='stats') renderStats();
+  if(pg==='financeiro') renderFinanceiro();
+}
+
+function toggleForm(id){
+  const el = document.getElementById(id);
+  el.style.display = el.style.display==='none' ? 'block' : 'none';
+  if(id==='form-partida') carregarPool();
+}
+
+// ====== JOGADORES ======
+function salvarJogador(){
+  const nome = document.getElementById('j-nome').value.trim();
+  if(!nome){ alert('Digite o nome!'); return; }
+  jogadores.push({
+    id: Date.now(),
+    nome,
+    apelido: document.getElementById('j-apelido').value.trim(),
+    posicao: document.getElementById('j-posicao').value,
+    fone: document.getElementById('j-fone').value.trim(),
+    gols: 0, assists: 0, partidas: 0
+  });
+  salvar();
+  ['j-nome','j-apelido','j-fone'].forEach(id => document.getElementById(id).value='');
+  mostrarAlert('alert-jogador');
+  renderJogadores();
+}
+
+function removerJogador(id){
+  if(!confirm('Remover este membro?')) return;
+  jogadores = jogadores.filter(j => j.id !== id);
+  salvar();
+  renderJogadores();
+}
+
+function renderJogadores(){
+  const tbody = document.getElementById('tbody-jogadores');
+  if(!jogadores.length){
+    tbody.innerHTML='<tr><td colspan="8" style="color:var(--texto2);text-align:center;padding:2rem">Nenhum membro cadastrado.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = jogadores.map((j,i) => `
+    <tr>
+      <td style="color:var(--texto2)">${i+1}</td>
+      <td><strong>${j.nome}</strong></td>
+      <td style="color:var(--texto2)">${j.apelido||'—'}</td>
+      <td><span class="pos pos-${j.posicao}">${j.posicao}</span></td>
+      <td><strong>${j.gols}</strong></td>
+      <td>${j.assists}</td>
+      <td>${j.partidas}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="removerJogador(${j.id})">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+// ====== PARTIDAS ======
+let timeA = [], timeB = [];
+
+function carregarPool(){
+  timeA = []; timeB = [];
+  const pool = document.getElementById('pool-disponivel');
+  const pA = document.getElementById('pool-time-a');
+  const pB = document.getElementById('pool-time-b');
+  if(!pool) return;
+  pool.innerHTML = jogadores.map(j => `
+    <div class="chip" onclick="moverParaTime(${j.id},'A')" data-id="${j.id}">
+      <span class="pos pos-${j.posicao}" style="font-size:0.65rem">${j.posicao}</span>
+      ${j.apelido||j.nome.split(' ')[0]}
+    </div>
+  `).join('') || '<span style="color:var(--texto2);font-size:0.8rem">Cadastre membros primeiro</span>';
+  pA.innerHTML=''; pB.innerHTML='';
+
+  // Preencher select de goleador
+  const sel = document.getElementById('ev-goleador');
+  if(sel) sel.innerHTML = '<option value="">Selecionar jogador</option>' +
+    jogadores.map(j=>`<option value="${j.id}">${j.apelido||j.nome}</option>`).join('');
+
+  // Data padrão
+  const dataInput = document.getElementById('p-data');
+  if(dataInput && !dataInput.value) dataInput.value = new Date().toISOString().split('T')[0];
+}
+
+function moverParaTime(id, time){
+  const pool = document.getElementById('pool-disponivel');
+  const chip = pool.querySelector(`[data-id="${id}"]`);
+  if(!chip) return;
+  const destino = document.getElementById(time==='A' ? 'pool-time-a' : 'pool-time-b');
+  const novoChip = chip.cloneNode(true);
+  novoChip.classList.add(time==='A'?'time-a':'time-b');
+  novoChip.onclick = null;
+  destino.appendChild(novoChip);
+  chip.remove();
+  if(time==='A') timeA.push(id); else timeB.push(id);
+}
+
+function moverDeVolta(e, time){
+  const chip = e.target.closest('.chip');
+  if(!chip) return;
+  const id = parseInt(chip.dataset.id);
+  const pool = document.getElementById('pool-disponivel');
+  const j = jogadores.find(x=>x.id===id);
+  if(!j) return;
+  const novoChip = document.createElement('div');
+  novoChip.className='chip';
+  novoChip.dataset.id=id;
+  novoChip.onclick = () => moverParaTime(id,'A');
+  novoChip.innerHTML=`<span class="pos pos-${j.posicao}" style="font-size:0.65rem">${j.posicao}</span>${j.apelido||j.nome.split(' ')[0]}`;
+  pool.appendChild(novoChip);
+  chip.remove();
+  if(time==='A') timeA = timeA.filter(x=>x!==id); else timeB = timeB.filter(x=>x!==id);
+}
+
+function adicionarLinhaEvento(){
+  const div = document.createElement('div');
+  div.className='form-row';
+  div.innerHTML=`
+    <div class="form-group">
+      <label>Jogador</label>
+      <select class="ev-goleador"><option value="">Selecionar</option>${jogadores.map(j=>`<option value="${j.id}">${j.apelido||j.nome}</option>`).join('')}</select>
+    </div>
+    <div class="form-group"><label>Gols</label><input type="number" class="ev-ngols" min="0" value="0"></div>
+    <div class="form-group"><label>Assists.</label><input type="number" class="ev-nassist" min="0" value="0"></div>
+    <button class="btn btn-danger btn-sm" style="margin-top:1.5rem;height:36px" onclick="this.parentNode.remove()">✕</button>
+  `;
+  document.getElementById('eventos-partida').appendChild(div);
+}
+
+function salvarPartida(){
+  const data = document.getElementById('p-data').value;
+  if(!data){ alert('Selecione a data!'); return; }
+  const golsA = parseInt(document.getElementById('p-gols-a').value)||0;
+  const golsB = parseInt(document.getElementById('p-gols-b').value)||0;
+
+  // Coletar eventos
+  const eventos = [];
+  // Linha principal
+  const g1 = document.getElementById('ev-goleador').value;
+  const n1 = parseInt(document.getElementById('ev-ngols').value)||0;
+  const a1 = parseInt(document.getElementById('ev-nassist').value)||0;
+  if(g1) eventos.push({id:parseInt(g1), gols:n1, assists:a1});
+  // Linhas extras
+  document.querySelectorAll('#eventos-partida .form-row').forEach(row=>{
+    const sel = row.querySelector('.ev-goleador');
+    const ng = row.querySelector('.ev-ngols');
+    const na = row.querySelector('.ev-nassist');
+    if(sel&&sel.value) eventos.push({id:parseInt(sel.value), gols:parseInt(ng?.value)||0, assists:parseInt(na?.value)||0});
+  });
+
+  const partida = {
+    id: Date.now(),
+    data,
+    local: document.getElementById('p-local').value.trim() || 'A definir',
+    golsA, golsB,
+    timeA: [...timeA], timeB: [...timeB],
+    eventos
+  };
+  partidas.unshift(partida);
+
+  // Atualizar stats dos jogadores
+  const participantes = [...new Set([...timeA, ...timeB])];
+  jogadores.forEach(j=>{
+    if(participantes.includes(j.id)) j.partidas++;
+    const ev = eventos.find(e=>e.id===j.id);
+    if(ev){ j.gols+=ev.gols; j.assists+=ev.assists; }
+  });
+
+  salvar();
+  mostrarAlert('alert-partida');
+  toggleForm('form-partida');
+  renderPartidas();
+  carregarPool();
+  document.getElementById('p-local').value='';
+  document.getElementById('p-gols-a').value=0;
+  document.getElementById('p-gols-b').value=0;
+  document.getElementById('ev-goleador').value='';
+  document.getElementById('ev-ngols').value=0;
+  document.getElementById('ev-nassist').value=0;
+}
+
+function removerPartida(id){
+  if(!confirm('Remover esta partida? As estatísticas serão mantidas.')) return;
+  partidas = partidas.filter(p=>p.id!==id);
+  salvar();
+  renderPartidas();
+}
+
+function renderPartidas(){
+  const tbody = document.getElementById('tbody-partidas');
+  if(!partidas.length){
+    tbody.innerHTML='<tr><td colspan="5" style="color:var(--texto2);text-align:center;padding:2rem">Nenhuma partida registrada.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = partidas.map(p=>{
+    const res = p.golsA>p.golsB?'Verde venceu':'B venceu';
+    const badgeClass = p.golsA>p.golsB?'badge-verde':p.golsB>p.golsA?'badge-amarelo':'badge-cinza';
+    const resTexto = p.golsA>p.golsB?'🟢 Time A venceu':p.golsB>p.golsA?'🟡 Time B venceu':'Empate';
+    return `<tr>
+      <td>${formatarData(p.data)}</td>
+      <td>${p.local}</td>
+      <td><strong>${p.golsA} × ${p.golsB}</strong></td>
+      <td><span class="badge ${badgeClass}">${resTexto}</span></td>
+      <td><button class="btn btn-danger btn-sm" onclick="removerPartida(${p.id})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ====== STATS ======
+function renderStats(){
+  const total = partidas.length;
+
+  // Artilharia
+  const artTbody = document.getElementById('rank-artilharia');
+  const sorted = [...jogadores].sort((a,b)=>b.gols-a.gols);
+  artTbody.innerHTML = sorted.length ? sorted.map((j,i)=>`
+    <tr>
+      <td class="rank ${i<3?'rank-'+(i+1):''}">${i+1}</td>
+      <td><strong>${j.nome}</strong>${j.apelido?` <span style="color:var(--texto2);font-size:0.8rem">(${j.apelido})</span>`:''}</td>
+      <td><span class="pos pos-${j.posicao}">${j.posicao}</span></td>
+      <td><strong>${j.gols}</strong></td>
+      <td>${j.partidas>0?(j.gols/j.partidas).toFixed(2):'-'}</td>
+    </tr>
+  `).join('') : '<tr><td colspan="5" style="color:var(--texto2);text-align:center;padding:1rem">Nenhum dado ainda.</td></tr>';
+
+  // Assistências
+  const asTbody = document.getElementById('rank-assistencias');
+  const sortedA = [...jogadores].sort((a,b)=>b.assists-a.assists);
+  asTbody.innerHTML = sortedA.length ? sortedA.map((j,i)=>`
+    <tr>
+      <td class="rank ${i<3?'rank-'+(i+1):''}">${i+1}</td>
+      <td><strong>${j.nome}</strong></td>
+      <td><span class="pos pos-${j.posicao}">${j.posicao}</span></td>
+      <td><strong>${j.assists}</strong></td>
+      <td>${j.partidas>0?(j.assists/j.partidas).toFixed(2):'-'}</td>
+    </tr>
+  `).join('') : '<tr><td colspan="5" style="color:var(--texto2);text-align:center;padding:1rem">Nenhum dado ainda.</td></tr>';
+
+  // Participações
+  const parTbody = document.getElementById('rank-participacoes');
+  const sortedP = [...jogadores].sort((a,b)=>b.partidas-a.partidas);
+  parTbody.innerHTML = sortedP.length ? sortedP.map((j,i)=>`
+    <tr>
+      <td class="rank ${i<3?'rank-'+(i+1):''}">${i+1}</td>
+      <td><strong>${j.nome}</strong></td>
+      <td>${j.partidas}</td>
+      <td>${total>0?Math.round(j.partidas/total*100)+'%':'—'}</td>
+    </tr>
+  `).join('') : '<tr><td colspan="4" style="color:var(--texto2);text-align:center;padding:1rem">Nenhum dado ainda.</td></tr>';
+}
+
+function mudarTab(btn, tab){
+  document.querySelectorAll('#pg-stats .tab').forEach(t=>t.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  ['artilharia','assistencias','participacoes'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display = t===tab?'block':'none';
+  });
+}
+
+// ====== FINANCEIRO ======
+function salvarTransacao(){
+  const valor = parseFloat(document.getElementById('t-valor').value)||0;
+  const desc = document.getElementById('t-desc').value.trim();
+  if(!valor || !desc){ alert('Preencha valor e descrição!'); return; }
+  transacoes.unshift({
+    id: Date.now(),
+    tipo: document.getElementById('t-tipo').value,
+    valor,
+    desc,
+    data: document.getElementById('t-data').value || new Date().toISOString().split('T')[0]
+  });
+  salvar();
+  mostrarAlert('alert-transacao');
+  toggleForm('form-transacao');
+  renderFinanceiro();
+  document.getElementById('t-valor').value='';
+  document.getElementById('t-desc').value='';
+}
+
+function removerTransacao(id){
+  if(!confirm('Remover este lançamento?')) return;
+  transacoes = transacoes.filter(t=>t.id!==id);
+  salvar();
+  renderFinanceiro();
+}
+
+function renderFinanceiro(){
+  let entradas=0, saidas=0;
+  transacoes.forEach(t=>{ if(t.tipo==='entrada') entradas+=t.valor; else saidas+=t.valor; });
+  const saldo = entradas-saidas;
+
+  document.getElementById('fin-entradas').textContent = formatarDinheiro(entradas);
+  document.getElementById('fin-saidas').textContent = formatarDinheiro(saidas);
+  const sEl = document.getElementById('fin-saldo');
+  sEl.textContent = formatarDinheiro(saldo);
+  sEl.className='saldo-big '+(saldo>=0?'saldo-positivo':'saldo-negativo');
+
+  const tbody = document.getElementById('tbody-transacoes');
+  if(!transacoes.length){
+    tbody.innerHTML='<tr><td colspan="5" style="color:var(--texto2);text-align:center;padding:2rem">Nenhum lançamento.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = transacoes.map(t=>`
+    <tr>
+      <td>${formatarData(t.data)}</td>
+      <td>${t.desc}</td>
+      <td><span class="badge ${t.tipo==='entrada'?'badge-verde':'badge-vermelho'}">${t.tipo==='entrada'?'↑ Entrada':'↓ Saída'}</span></td>
+      <td style="font-weight:500;color:${t.tipo==='entrada'?'#4ade80':'#f87171'}">${t.tipo==='entrada'?'+':'-'}${formatarDinheiro(t.valor)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="removerTransacao(${t.id})">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+// ====== DASHBOARD ======
+function atualizarDashboard(){
+  document.getElementById('d-membros').textContent = jogadores.length;
+  document.getElementById('d-partidas').textContent = partidas.length;
+  const totalGols = jogadores.reduce((s,j)=>s+j.gols,0);
+  document.getElementById('d-gols').textContent = totalGols;
+
+  let entradas=0,saidas=0;
+  transacoes.forEach(t=>{ if(t.tipo==='entrada')entradas+=t.valor; else saidas+=t.valor; });
+  const saldo=entradas-saidas;
+  const sEl = document.getElementById('d-saldo');
+  sEl.textContent = formatarDinheiro(saldo);
+  sEl.className = 'stat-num '+(saldo>=0?'saldo-positivo':'saldo-negativo');
+
+  // Artilheiro e assist
+  const artilheiro = [...jogadores].sort((a,b)=>b.gols-a.gols)[0];
+  const assistente = [...jogadores].sort((a,b)=>b.assists-a.assists)[0];
+  document.getElementById('dash-artilheiro').innerHTML = artilheiro?.gols>0
+    ? `<strong>${artilheiro.apelido||artilheiro.nome}</strong> <span style="color:var(--texto2)">${artilheiro.gols} gols</span>`
+    : '<span style="color:var(--texto2)">—</span>';
+  document.getElementById('dash-assist').innerHTML = assistente?.assists>0
+    ? `<strong>${assistente.apelido||assistente.nome}</strong> <span style="color:var(--texto2)">${assistente.assists} assist.</span>`
+    : '<span style="color:var(--texto2)">—</span>';
+
+  // Últimas partidas
+  const ultDiv = document.getElementById('dash-ultimas');
+  if(!partidas.length){
+    ultDiv.innerHTML='<div style="color:var(--texto2);font-size:0.85rem">Nenhuma partida registrada ainda.</div>';
+    return;
+  }
+  ultDiv.innerHTML = partidas.slice(0,3).map(p=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--borda)">
+      <div style="font-size:0.85rem;color:var(--texto2)">${formatarData(p.data)} · ${p.local}</div>
+      <div style="font-weight:600">${p.golsA} × ${p.golsB}</div>
+    </div>
+  `).join('');
+}
+
+// ====== UTILS ======
+function formatarData(d){
+  if(!d) return '—';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+function formatarDinheiro(v){
+  return 'R$'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function mostrarAlert(id){
+  const el = document.getElementById(id);
+  el.style.display='block';
+  setTimeout(()=>el.style.display='none', 2500);
+}
+
+// Init
+atualizarDashboard();
+</script>
+</body>
+</html>
