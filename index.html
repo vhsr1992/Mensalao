@@ -214,39 +214,28 @@
     </div>
   </div>
 
-  <!-- RODADA ATUAL -->
-  <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem">
-      <div class="card-titulo" style="margin-bottom:0">⚽ Rodada desta semana</div>
-      <div id="dash-rodada-info" class="rodada-badge">Nenhuma rodada registrada</div>
-    </div>
-    <div class="stats-grid" style="margin-bottom:0">
-      <div class="stat-card"><div class="stat-num" id="dr-gols">—</div><div class="stat-label">Gols na rodada</div></div>
-      <div class="stat-card"><div class="stat-num" id="dr-assist">—</div><div class="stat-label">Assist. na rodada</div></div>
-      <div class="stat-card"><div class="stat-num" id="dr-placar">—</div><div class="stat-label">Placar</div></div>
-      <div class="stat-card"><div class="stat-num" id="dr-jogadores">—</div><div class="stat-label">Jogadores</div></div>
-    </div>
-    <div style="margin-top:0.75rem" id="dr-destaque"></div>
+  <!-- INFO DA SEMANA -->
+  <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap">
+    <div class="rodada-badge" id="dash-rodada-info">Nenhuma rodada ainda</div>
   </div>
 
-  <!-- TOTAIS GERAIS -->
-  <div class="card">
-    <div class="card-titulo">📊 Totais da temporada</div>
-    <div class="stats-grid" style="margin-bottom:0">
-      <div class="stat-card"><div class="stat-num" id="d-membros">0</div><div class="stat-label">Membros</div></div>
-      <div class="stat-card"><div class="stat-num" id="d-partidas">0</div><div class="stat-label">Partidas</div></div>
-      <div class="stat-card"><div class="stat-num" id="d-gols">0</div><div class="stat-label">Gols totais</div></div>
-      <div class="stat-card"><div class="stat-num saldo-positivo" id="d-saldo">R$0</div><div class="stat-label">Saldo caixa</div></div>
-    </div>
+  <!-- STATS GRID ÚNICO -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num" id="d-membros-semana">—</div><div class="stat-label">Membros na semana</div></div>
+    <div class="stat-card"><div class="stat-num" id="d-partidas">0</div><div class="stat-label">Total de partidas</div></div>
+    <div class="stat-card"><div class="stat-num" id="d-gols-semana">—</div><div class="stat-label">Gols na semana</div></div>
+    <div class="stat-card"><div class="stat-num" id="d-assist-semana">—</div><div class="stat-label">Assistências semana</div></div>
+    <div class="stat-card"><div class="stat-num" id="d-saldo">R$0</div><div class="stat-label">Saldo do caixa</div></div>
   </div>
 
+  <!-- ARTILHEIRO E ASSIST DA SEMANA -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
     <div class="card">
-      <div class="card-titulo">🥇 Artilheiro geral</div>
+      <div class="card-titulo">🥇 Artilheiro da semana</div>
       <div id="dash-artilheiro" style="font-size:1.05rem;font-weight:500">—</div>
     </div>
     <div class="card">
-      <div class="card-titulo">🎯 Mais assistências</div>
+      <div class="card-titulo">🎯 Top assistência da semana</div>
       <div id="dash-assist" style="font-size:1.05rem;font-weight:500">—</div>
     </div>
   </div>
@@ -765,39 +754,59 @@ function renderFinanceiro(){
 
 // ====== DASHBOARD ======
 function atualizarDashboard(){
-  document.getElementById('d-membros').textContent=jogadores.length;
+  // Total de partidas
   document.getElementById('d-partidas').textContent=partidas.length;
-  document.getElementById('d-gols').textContent=jogadores.reduce((s,j)=>s+j.gols,0);
+
+  // Saldo do caixa
   let e=0,s=0; transacoes.forEach(t=>{ if(t.tipo==='entrada')e+=t.valor; else s+=t.valor; });
   const sal=e-s;
   const sEl=document.getElementById('d-saldo');
-  sEl.textContent=fmt(sal); sEl.className='stat-num '+(sal>=0?'saldo-positivo':'saldo-negativo');
-  const art=[...jogadores].sort((a,b)=>b.gols-a.gols)[0];
-  const ass=[...jogadores].sort((a,b)=>b.assists-a.assists)[0];
-  document.getElementById('dash-artilheiro').innerHTML=art?.gols>0?`<strong>${art.apelido||art.nome}</strong> <span style="color:var(--texto2)">${art.gols} gols</span>`:'<span style="color:var(--texto2)">—</span>';
-  document.getElementById('dash-assist').innerHTML=ass?.assists>0?`<strong>${ass.apelido||ass.nome}</strong> <span style="color:var(--texto2)">${ass.assists} assist.</span>`:'<span style="color:var(--texto2)">—</span>';
+  sEl.textContent=fmt(sal);
+  sEl.className='stat-num '+(sal>=0?'saldo-positivo':'saldo-negativo');
 
-  // Rodada atual = última partida registrada
+  // Dados da última partida (semana)
   if(partidas.length>0){
     const ultima=partidas[0];
-    document.getElementById('dash-rodada-info').textContent=`${formatarData(ultima.data)} · ${ultima.local}`;
-    // Gols e assists da última rodada
-    const golsRodada=ultima.eventos.reduce((s,e)=>s+e.gols,0);
-    const assistsRodada=ultima.eventos.reduce((s,e)=>s+e.assists,0);
+    document.getElementById('dash-rodada-info').textContent=`⚽ ${formatarData(ultima.data)} · ${ultima.local}`;
+
+    // Membros que jogaram
     const participantes=[...new Set([...ultima.timeA,...ultima.timeB])];
-    document.getElementById('dr-gols').textContent=golsRodada;
-    document.getElementById('dr-assist').textContent=assistsRodada;
-    document.getElementById('dr-placar').textContent=`${ultima.golsA}×${ultima.golsB}`;
-    document.getElementById('dr-jogadores').textContent=participantes.length;
-    // Destaque da rodada
-    const maisGols=ultima.eventos.sort((a,b)=>b.gols-a.gols)[0];
-    if(maisGols&&maisGols.gols>0){
-      const jDest=jogadores.find(j=>j.id===maisGols.id);
-      if(jDest) document.getElementById('dr-destaque').innerHTML=`<div style="font-size:0.82rem;color:var(--texto2)">⭐ Destaque da rodada: <strong style="color:var(--ouro)">${jDest.apelido||jDest.nome}</strong> com ${maisGols.gols} gol(s)</div>`;
+    document.getElementById('d-membros-semana').textContent=participantes.length;
+
+    // Gols e assists da semana
+    const golsSemana=ultima.eventos.reduce((acc,ev)=>acc+ev.gols,0);
+    const assistsSemana=ultima.eventos.reduce((acc,ev)=>acc+ev.assists,0);
+    document.getElementById('d-gols-semana').textContent=golsSemana;
+    document.getElementById('d-assist-semana').textContent=assistsSemana;
+
+    // Artilheiro da semana
+    const artSemana=[...ultima.eventos].sort((a,b)=>b.gols-a.gols)[0];
+    if(artSemana&&artSemana.gols>0){
+      const jArt=jogadores.find(j=>j.id===artSemana.id);
+      document.getElementById('dash-artilheiro').innerHTML=jArt
+        ?`<strong>${jArt.apelido||jArt.nome}</strong> <span style="color:var(--texto2)">${artSemana.gols} gol(s)</span>`
+        :'<span style="color:var(--texto2)">—</span>';
+    } else {
+      document.getElementById('dash-artilheiro').innerHTML='<span style="color:var(--texto2)">Sem gols registrados</span>';
+    }
+
+    // Top assistência da semana
+    const assSemana=[...ultima.eventos].sort((a,b)=>b.assists-a.assists)[0];
+    if(assSemana&&assSemana.assists>0){
+      const jAss=jogadores.find(j=>j.id===assSemana.id);
+      document.getElementById('dash-assist').innerHTML=jAss
+        ?`<strong>${jAss.apelido||jAss.nome}</strong> <span style="color:var(--texto2)">${assSemana.assists} assist.</span>`
+        :'<span style="color:var(--texto2)">—</span>';
+    } else {
+      document.getElementById('dash-assist').innerHTML='<span style="color:var(--texto2)">Sem assistências registradas</span>';
     }
   } else {
-    document.getElementById('dash-rodada-info').textContent='Nenhuma rodada registrada';
-    ['dr-gols','dr-assist','dr-placar','dr-jogadores'].forEach(id=>document.getElementById(id).textContent='—');
+    document.getElementById('dash-rodada-info').textContent='Nenhuma rodada ainda';
+    document.getElementById('d-membros-semana').textContent='—';
+    document.getElementById('d-gols-semana').textContent='—';
+    document.getElementById('d-assist-semana').textContent='—';
+    document.getElementById('dash-artilheiro').innerHTML='<span style="color:var(--texto2)">—</span>';
+    document.getElementById('dash-assist').innerHTML='<span style="color:var(--texto2)">—</span>';
   }
 }
 
